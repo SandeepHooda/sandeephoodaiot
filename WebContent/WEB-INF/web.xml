@@ -10,6 +10,16 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
+    <description>Sample Servlet</description>
+    <display-name>Sandeep_responsiveServlet</display-name>
+    <servlet-name>Sandeep_responsiveServlet</servlet-name>
+    <servlet-class>com.Sandeep_responsiveServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Sandeep_responsiveServlet</servlet-name>
+    <url-pattern>/pushnotification</url-pattern>
+  </servlet-mapping>
+  <servlet>
     <description></description>
     <display-name>GetData</display-name>
     <servlet-name>GetData</servlet-name>
