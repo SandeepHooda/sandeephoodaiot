@@ -39,4 +39,54 @@
     <servlet-name>PutData</servlet-name>
     <url-pattern>/PutData</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AskAlexa</display-name>
+    <servlet-name>AskAlexa</servlet-name>
+    <servlet-class>com.iot.AskAlexa</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AskAlexa</servlet-name>
+    <url-pattern>/AskAlexa</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AskAlexa2</display-name>
+    <servlet-name>AskAlexa2</servlet-name>
+    <servlet-class>com.AskAlexa.AskAlexa</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AskAlexa2</servlet-name>
+    <url-pattern>/AskAlexa/AskAlexa</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Morgan</display-name>
+    <servlet-name>Morgan</servlet-name>
+    <servlet-class>com.AskAlexa.Morgan</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Morgan</servlet-name>
+    <url-pattern>/Morgan</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>MorganEmp</display-name>
+    <servlet-name>MorganEmp</servlet-name>
+    <servlet-class>com.AskAlexa.MorganEmp</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MorganEmp</servlet-name>
+    <url-pattern>/MorganEmp</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>SetAppliance</display-name>
+    <servlet-name>SetAppliance</servlet-name>
+    <servlet-class>com.iot.SetAppliance</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SetAppliance</servlet-name>
+    <url-pattern>/SetAppliance</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -98,7 +98,7 @@ function switchOnOff(){
 	}
 	var fan = ",\"fan\":\""+fanCmd+"\"}";
 	
-	var url = "https://api.mlab.com/api/1/databases/sandeepdb/collections/bedRoom?apiKey=soblgT7uxiAE6RsBOGwI9ZuLmcCgcvh_";
+	var url = "https://sandeephoodaiot.appspot.com/SetAppliance?collection=bedRoom&light="+lightCmd+"&fan="+fanCmd;
 	
 	var xhttp;
 	if (window.XMLHttpRequest) {
@@ -117,7 +117,7 @@ function switchOnOff(){
 	    	timer = setInterval(getStatus, 2000);
 	    }
 	  };
-	xhttp.open("PUT", url, true);
+	xhttp.open("GET", url, true);
 	xhttp.setRequestHeader("Content-type", "application/json");
 	xhttp.send(light+fan);
 	

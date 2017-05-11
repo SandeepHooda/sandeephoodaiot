@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,13 +21,13 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class Sandeep_responsiveServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		
+		String toAddress = req.getParameter("to");
 		FetchOptions.Builder.doNotValidateCertificate();
 		String message = "";
 		JSONObject jsonObj = new JSONObject();
 		try {
 			
-			jsonObj.put("to", "fG03A_TSgOM:APA91bH7lDTX1yhDcWV_407jX1oRUnArE2SC-zu56hUJHrRCZ_bFndTFdvLejxom2ILCCjse-z0dUIfKb95TIWVAB_4PXXORTfXkS6JkzaVz1Il7PXk-K6Ej4buFLeE1nUci5PCW3csp");
+			jsonObj.put("to", toAddress);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -57,7 +56,10 @@ public class Sandeep_responsiveServlet extends HttpServlet {
 	        response.append(line);
 	      }
 	      reader.close();
-	      message = "All good "+response.toString();
+	      message = "Response  "+response.toString();
+	      if (message.indexOf("\"failure\":0") > 0){
+	    	  message = "You can refresh this browser tab to get more and more notifications.";
+	      }
 	      req.setAttribute("response", response.toString());
 	    } else {
 	    	StringBuffer response = new StringBuffer();
