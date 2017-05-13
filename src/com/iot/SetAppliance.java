@@ -46,12 +46,23 @@ public class SetAppliance extends HttpServlet {
 		String light = request.getParameter("light");
 		String fan = request.getParameter("fan");
 		String respo = "";
+		JSONObject applianceJsonStatus =null;
 		try {
-			JSONObject applianceJsonStatus = new JSONObject(currentData);
+			applianceJsonStatus = new JSONObject(currentData);
 			if (light != null){
+				if("on".equalsIgnoreCase(light)){//Because wiring is done do
+					light = "off";
+				}else {
+					light = "on";
+				}
 				applianceJsonStatus.put("light", light);
 			}
 			if (fan != null){
+				/*if("on".equalsIgnoreCase(fan)){//Fan is not controlled yet
+					fan = "off";
+				}else {
+					fan = "on";
+				}*/
 				applianceJsonStatus.put("fan", fan);
 			}
 			
@@ -62,8 +73,9 @@ public class SetAppliance extends HttpServlet {
 			        URL url = new URL(httpsURL);
 		            HTTPRequest req = new HTTPRequest(url, HTTPMethod.PUT, lFetchOptions);
 		            HTTPHeader header = new HTTPHeader("Content-type", "application/json");
+		            
 		            req.setHeader(header);
-		            String payload = "";
+		           
 		            req.setPayload((applianceJsonStatus.toString()).getBytes());
 		            HTTPResponse res = fetcher.fetch(req);
 		            respo =(new String(res.getContent()));
@@ -83,8 +95,12 @@ public class SetAppliance extends HttpServlet {
 	  
 		 response.setContentType("text/plain");
 		
-		
-		 response.getWriter().println(respo);
+		if (null != applianceJsonStatus){
+			response.getWriter().println(applianceJsonStatus.toString());
+		}else {
+			response.getWriter().println("Could not find current status of appliance");
+		}
+		 
 	}
 	private String getCurrentStatus(String collection){
 		URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
