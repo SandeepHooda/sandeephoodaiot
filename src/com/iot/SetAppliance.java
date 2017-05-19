@@ -1,22 +1,18 @@
 package com.iot;
 
-import java.io.IOException;
-import java.net.URL;
 
+import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.appengine.api.urlfetch.FetchOptions;
-import com.google.appengine.api.urlfetch.HTTPHeader;
-import com.google.appengine.api.urlfetch.HTTPMethod;
-import com.google.appengine.api.urlfetch.HTTPRequest;
-import com.google.appengine.api.urlfetch.HTTPResponse;
+
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
@@ -25,6 +21,7 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
  */
 public class SetAppliance extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger log = Logger.getLogger(SetAppliance.class.getName());
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -38,97 +35,99 @@ public class SetAppliance extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
-		FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();
-		String collection = request.getParameter("collection");
-		String currentData = getCurrentStatus(collection);
+		boolean aValidRequest = true;
+		//1. Validate request
+		String access_token = request.getParameter("access_token");
+		if (null == access_token || access_token.trim().length() == 0){
+			response.sendError(response.SC_BAD_REQUEST);
+			log.info("Bad request missing access token");
+			aValidRequest = false;
 		
-		String light = request.getParameter("light");
-		String fan = request.getParameter("fan");
-		String respo = "";
-		JSONObject applianceJsonStatus =null;
-		try {
-			applianceJsonStatus = new JSONObject(currentData);
-			if (light != null){
-				if("on".equalsIgnoreCase(light)){//Because wiring is done do
-					light = "off";
+		}
+		
+		//2. Get User details
+		String userDetails = Utils.getUserDetails(access_token);
+		JSONObject userDetailsJson = null;
+		String email = "";
+		String userName = "";
+		if (null != userDetails){
+			try {
+				userDetailsJson = new JSONObject(userDetails);
+				if (null == userDetailsJson || userDetailsJson.getString("email") == null || "".equals(userDetailsJson.getString("email")) || userDetailsJson.getString("name") == null){
+					response.sendError(response.SC_UNAUTHORIZED);
+					log.info("Un Authorised request ");
+					aValidRequest = false;
+					
 				}else {
-					light = "on";
+					email = userDetailsJson.getString("email");
+					userName = userDetailsJson.getString("name");
+					if (null != userName && !"".equals(userName)){
+						if (userName.indexOf(" ") >0){
+							userName = userName.substring(0, userName.indexOf(" "));
+						}
+					}else {
+						userName = "";
+					}
 				}
-				applianceJsonStatus.put("light", light);
-			}
-			if (fan != null){
-				/*if("on".equalsIgnoreCase(fan)){//Fan is not controlled yet
-					fan = "off";
-				}else {
-					fan = "on";
-				}*/
-				applianceJsonStatus.put("fan", fan);
-			}
-			
-			String httpsURL = "https://api.mlab.com/api/1/databases/sandeepdb/collections/"+collection+"?apiKey=soblgT7uxiAE6RsBOGwI9ZuLmcCgcvh_";
-			
-			 try {
 				
-			        URL url = new URL(httpsURL);
-		            HTTPRequest req = new HTTPRequest(url, HTTPMethod.PUT, lFetchOptions);
-		            HTTPHeader header = new HTTPHeader("Content-type", "application/json");
-		            
-		            req.setHeader(header);
-		           
-		            req.setPayload((applianceJsonStatus.toString()).getBytes());
-		            HTTPResponse res = fetcher.fetch(req);
-		            respo =(new String(res.getContent()));
-		 
-		        } catch (IOException e) {
-		        	respo = e.getMessage();
-		        }
-		} catch (JSONException e1) {
-			respo = e1.getMessage();
-			e1.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+				response.sendError(response.SC_UNAUTHORIZED);
+				log.info("Un-Authorised request having exception Details "+e.getMessage()+" Access token "+access_token);
+				aValidRequest = false;
+				return;
+			}
 		}
 		
 		
-		
-		
-		
-	  
-		 response.setContentType("text/plain");
-		
-		if (null != applianceJsonStatus){
-			response.getWriter().println(applianceJsonStatus.toString());
-		}else {
-			response.getWriter().println("Could not find current status of appliance");
-		}
-		 
-	}
-	private String getCurrentStatus(String collection){
-		URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
-		FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();
-
-		String httpsURL = "https://api.mlab.com/api/1/databases/sandeepdb/collections/"+collection+"?apiKey=soblgT7uxiAE6RsBOGwI9ZuLmcCgcvh_";
-		
-			httpsURL += "&f={\"_id\":0}";
-		
-		String respo = "";
-		 try {
+		if (aValidRequest){
+			//3. Now When we have a valid user details
 			
-		        URL url = new URL(httpsURL);
-	            HTTPRequest req = new HTTPRequest(url, HTTPMethod.GET, lFetchOptions);
-	            HTTPResponse res = fetcher.fetch(req);
-	            respo =(new String(res.getContent()));
-	 
-	        } catch (IOException e) {
-	        	respo = e.getMessage();
-	        }
+			URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
+			FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();
+			String collection = request.getParameter("collection");
+			collection += "_"+email ;
+			
+			//4. Get appliance current status
+			String currentData = Utils.getCurrentStatus(collection);
+			if(null == currentData || "".equals(currentData.trim())){// There is no collection with that name so lets create that
+				currentData = "{ \"fan\" : \"off\" , \"light\" : \"off\"}";
+				Utils.createNewCollection(collection);
+			}
+			
+			
+			//5. Create json data from current data in db and applying status from request 
+			JSONObject applianceJsonStatus =null;
+			applianceJsonStatus = Utils.createApplianceStatusFromReq(request, applianceJsonStatus, currentData);
+			
+			//6. Update teh appliance status in DB
+			Utils.updateData(collection, applianceJsonStatus);
+			
+		  
+			 response.setContentType("text/plain");
+			 try {
+				applianceJsonStatus.put("userName", userName);
+				applianceJsonStatus.put("email", email);
+				log.info("Setting user details  name "+userName + " email ="+email);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 
+			if (null != applianceJsonStatus){
+				response.getWriter().println(applianceJsonStatus.toString());
+			}else {
+				response.getWriter().println("Could not find current status of appliance");
+			}
+		}
 		
-	  
 		 
-		
-		
-		 return respo.replaceAll("\\[", "").replaceAll("]", "");
 	}
+	
+	
+	
 
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */

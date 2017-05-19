@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.Constants;
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -43,7 +44,7 @@ public class PutData extends HttpServlet {
 		TimeZone.setDefault(TimeZone.getTimeZone("IST"));
 		String value = request.getParameter("value") + " @ "+ (new Date());
 		
-		String httpsURL = "https://api.mlab.com/api/1/databases/sandeepdb/collections/"+collection+"?apiKey=soblgT7uxiAE6RsBOGwI9ZuLmcCgcvh_";
+		String httpsURL = "https://api.mlab.com/api/1/databases/sandeepdb/collections/"+collection+"?apiKey="+Constants.mlabKey;
 		String respo = "";
 		 try {
 			

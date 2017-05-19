@@ -5,6 +5,7 @@ import java.net.URL;
 
 import javax.servlet.http.*;
 
+import com.Constants;
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
@@ -35,7 +36,7 @@ public class GetData extends HttpServlet {
 		FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();
 		String collection = request.getParameter("collection");
 		String datakey = request.getParameter("datakey");
-		String httpsURL = "https://api.mlab.com/api/1/databases/sandeepdb/collections/"+collection+"?apiKey=soblgT7uxiAE6RsBOGwI9ZuLmcCgcvh_";
+		String httpsURL = "https://api.mlab.com/api/1/databases/sandeepdb/collections/"+collection+"?apiKey="+Constants.mlabKey;
 		if (datakey != null && datakey.trim().length() > 0){
 			httpsURL += "&f={\""+datakey+"\":1,\"_id\":0}";
 		}else{

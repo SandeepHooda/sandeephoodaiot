@@ -89,4 +89,44 @@
     <servlet-name>SetAppliance</servlet-name>
     <url-pattern>/SetAppliance</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Step0GetTempAuthCode</display-name>
+    <servlet-name>Step0GetTempAuthCode</servlet-name>
+    <servlet-class>com.github.Step0GetTempAuthCode</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Step0GetTempAuthCode</servlet-name>
+    <url-pattern>/GitHub/Step0GetTempAuthCode</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Step1GetAccessToken</display-name>
+    <servlet-name>Step1GetAccessToken</servlet-name>
+    <servlet-class>com.github.Step1GetAccessToken</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Step1GetAccessToken</servlet-name>
+    <url-pattern>/GitHub/Step1GetAccessToken</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>SignOut</display-name>
+    <servlet-name>SignOut</servlet-name>
+    <servlet-class>com.github.SignOut</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SignOut</servlet-name>
+    <url-pattern>/GitHub/SignOut</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>GetUserDetails</display-name>
+    <servlet-name>GetUserDetails</servlet-name>
+    <servlet-class>com.github.GetUserDetails</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetUserDetails</servlet-name>
+    <url-pattern>/GitHub/GetUserDetails</url-pattern>
+  </servlet-mapping>
 </web-app>

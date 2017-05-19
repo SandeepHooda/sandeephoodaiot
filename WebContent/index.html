@@ -8,9 +8,13 @@
    
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+ 	<script src="js/github.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link href="style/app.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"  href="css/facebook.css">
+	<link rel="stylesheet" type="text/css"  href="css/github.css">
 <script>
 var wifiStatus = "";
 var previousStatus = "";
@@ -55,19 +59,22 @@ var url = "/GetData?collection=testMicroCtrl&datakey=microctrl";
 	    if (xhttp.readyState == 4 && xhttp.status == 200) {
 	    	var obj = JSON.parse(xhttp.responseText);
 	    	var status = obj.microctrl;
-	    	if (status.indexOf("light:on") >= 0){
-	    		document.getElementById("LightStatusOn").style.visibility = 'visible' ;
-	    		document.getElementById("LightStatusOff").style.visibility = 'hidden' ;
-	    	}else {
-	    		document.getElementById("LightStatusOn").style.visibility = 'hidden' ;
-	    		document.getElementById("LightStatusOff").style.visibility = 'visible' ;
-	    	}
-	    	if (status.indexOf("fan:on") >= 0){
-	    		document.getElementById("FanStatusOn").style.visibility = 'visible' ;
-	    		document.getElementById("FanStatusOff").style.visibility = 'hidden' ;
-	    	}else {
-	    		document.getElementById("FanStatusOn").style.visibility = 'hidden'  ;
-	    		document.getElementById("FanStatusOff").style.visibility = 'visible' ;
+	    	if (document.getElementById("switches").style.visibility == 'visible'){
+	    		if (status.indexOf("light:on") >= 0){
+		    		document.getElementById("LightStatusOn").style.visibility = 'visible' ;
+		    		document.getElementById("LightStatusOff").style.visibility = 'hidden' ;
+		    	}else {
+		    		document.getElementById("LightStatusOn").style.visibility = 'hidden' ;
+		    		document.getElementById("LightStatusOff").style.visibility = 'visible' ;
+		    	}
+		    	if (status.indexOf("fan:on") >= 0){
+		    		document.getElementById("FanStatusOn").style.visibility = 'visible' ;
+		    		document.getElementById("FanStatusOff").style.visibility = 'hidden' ;
+		    	}else {
+		    		document.getElementById("FanStatusOn").style.visibility = 'hidden'  ;
+		    		document.getElementById("FanStatusOff").style.visibility = 'visible' ;
+		    	}
+		    	
 	    	}
 	    	
 	    	var microCtrlUpdateTime = status.substring(status.indexOf("@")+1);
@@ -85,6 +92,21 @@ var url = "/GetData?collection=testMicroCtrl&datakey=microctrl";
 	xhttp.send();
 	
 }
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 var timer = setInterval(getStatus, 2000);
 function switchOnOff(){
 	var lightCmd = "off";
@@ -97,8 +119,8 @@ function switchOnOff(){
 		fanCmd = "on";
 	}
 	var fan = ",\"fan\":\""+fanCmd+"\"}";
-	
-	var url = "https://sandeephoodaiot.appspot.com/SetAppliance?collection=bedRoom&light="+lightCmd+"&fan="+fanCmd;
+	var cookieAccess = getCookie("cookieAccess");
+	var url = "https://sandeephoodaiot.appspot.com/SetAppliance?collection=bedRoom&light="+lightCmd+"&fan="+fanCmd+"&access_token="+cookieAccess;
 	
 	var xhttp;
 	if (window.XMLHttpRequest) {
@@ -125,11 +147,33 @@ function switchOnOff(){
 </script>
   </head>
   <body>
+  
+  <div class="oauth-button"  >
+		<form action="GitHub/Step0GetTempAuthCode">
+	  		
+	  		<input type="submit" value="Sign in" class="signin-btn"   id="signin" name="signin"></input>
+		</form>
+		<form action="/GitHub/SignOut">
+	  		
+	  		<input disabled type="submit" value="Sign out" class="signout-btn" id="signout" name="signout"></input>
+		</form>
+		
+		
+	</div>
+	
+	<div >
+   		
+   		<img id="InfoImg" name="InfoImg" alt="" src="images/city.png" />
+   		<span id="welcomeMsg" name="welcomeMsg" >Welcome</span> <span id="loginInfo" name="loginInfo"></span>
+</div>
+
+<div id="switches" style="visibility:hidden">
+
 <table>
 <tr>
 <td>FAN&nbsp;&nbsp;</td>
 <td>
- <div class="onoffswitch">
+ <div class="onoffswitch" >
     <input type="checkbox" name="onoffswitchFan" class="onoffswitch-checkbox" id="onoffswitchFan" onclick='switchOnOff()'>
     <label class="onoffswitch-label" for="onoffswitchFan">
         <span class="onoffswitch-inner"></span>
@@ -138,8 +182,8 @@ function switchOnOff(){
 </div>
 </td>
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-<td><img id="FanStatusOn" src="/images/on.jpg" style="visibility:false;position:absolute;  top:0; width: 30;  height: 30;"></img>
-    <img id="FanStatusOff" src="/images/off.jpg"  style="visibility:true;position:absolute;  top:0; width: 30;  height: 30;""></img>
+<td><img id="FanStatusOn" src="/images/on.jpg" style="visibility:false;position:absolute;  top:130; width: 30;  height: 30;"></img>
+    <img id="FanStatusOff" src="/images/off.jpg"  style="visibility:true;position:absolute;  top:130; width: 30;  height: 30;""></img>
 </td>
 </tr>
 <tr>
@@ -155,8 +199,8 @@ function switchOnOff(){
 </td>
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
  <!--  On off images are revered because of hardware wiring -->
-<td><img id="LightStatusOn" src="/images/off.jpg" style="visibility:false;position:absolute;  top:40; width: 30;  height: 30;"></img>
-    <img id="LightStatusOff" src="/images/on.jpg"  style="visibility:true;position:absolute;  top:40; width: 30;  height: 30;"></img>
+<td><img id="LightStatusOn" src="/images/off.jpg" style="visibility:false;position:absolute;  top:165; width: 30;  height: 30;"></img>
+    <img id="LightStatusOff" src="/images/on.jpg"  style="visibility:true;position:absolute;  top:165; width: 30;  height: 30;"></img>
 </td>
 </table>
 <!--  
@@ -173,5 +217,7 @@ function switchOnOff(){
     <img id="ledoff" src="/images/LEDOFF.png"  style="visibility:true;position:absolute; top: 200; width: 100; left:100;      height: 100;""></img>
     -->
      <div id="status" name="status"></div>
+     
+</div>     
   </body>
 </html>
