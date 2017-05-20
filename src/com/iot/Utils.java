@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +26,14 @@ public class Utils {
 	private static final Logger log = Logger.getLogger(Utils.class.getName());
 	private static URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
 	private static FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();
+	private static List<String> enrolledEmails = new ArrayList<String>();
+	static{
+		enrolledEmails.add("sonu.hooda@gmail.com");
+	}
 	
+	public static boolean isUserEnrolled(String email){
+		return enrolledEmails.contains(email);
+	}
 	public static String getCurrentStatus(String collection){
 		URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
 		FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();

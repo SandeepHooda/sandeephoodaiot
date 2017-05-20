@@ -60,6 +60,11 @@ public class SetAppliance extends HttpServlet {
 					
 				}else {
 					email = userDetailsJson.getString("email");
+					if(!Utils.isUserEnrolled(email)){
+						response.sendError(response.SC_FORBIDDEN);
+						log.info("User is not enrolled  "+email);
+						aValidRequest = false;
+					}
 					userName = userDetailsJson.getString("name");
 					if (null != userName && !"".equals(userName)){
 						if (userName.indexOf(" ") >0){
