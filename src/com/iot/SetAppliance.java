@@ -85,14 +85,16 @@ public class SetAppliance extends HttpServlet {
 			
 			URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
 			FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();
-			String collection = request.getParameter("collection");
+			String collectionNameOrignal = request.getParameter("collection");
+			String collection = collectionNameOrignal;
 			collection += "_"+email ;
 			
 			//4. Get appliance current status
 			String currentData = Utils.getCurrentStatus(collection);
 			if(null == currentData || "".equals(currentData.trim())){// There is no collection with that name so lets create that
 				currentData = "{ \"fan\" : \"off\" , \"light\" : \"off\"}";
-				Utils.createNewCollection(collection);
+				Utils.createNewCollection(collectionNameOrignal, email);
+				Utils.createNewCollection("microCtrl_"+collectionNameOrignal, email);
 			}
 			
 			

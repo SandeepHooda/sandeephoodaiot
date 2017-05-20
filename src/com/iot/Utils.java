@@ -79,8 +79,9 @@ public class Utils {
 		 }
 		return json.toString();
 	}
-	public static void createNewCollection(String collection){
-		String httpsURL = "https://api.mlab.com/api/1/databases/sandeepdb/collections/"+collection+"?apiKey="+Constants.mlabKey;
+	public static void createNewCollection(String collection, String email){
+		String collectionToCreate = collection +"_"+email;
+		String httpsURL = "https://api.mlab.com/api/1/databases/sandeepdb/collections/"+collectionToCreate+"?apiKey="+Constants.mlabKey;
 		
 		 try {
 			
@@ -128,19 +129,10 @@ public class Utils {
 			applianceJsonStatus = new JSONObject(currentData);
 			log.info("New json object created from currentData "+currentData);
 			if (light != null){
-				if("on".equalsIgnoreCase(light)){//Because wiring is done do
-					light = "off";
-				}else {
-					light = "on";
-				}
 				applianceJsonStatus.put("light", light);
 			}
 			if (fan != null){
-				/*if("on".equalsIgnoreCase(fan)){//Fan is not controlled yet
-					fan = "off";
-				}else {
-					fan = "on";
-				}*/
+				
 				applianceJsonStatus.put("fan", fan);
 			}
 			
