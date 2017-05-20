@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.email.PostMan;
 import com.google.appengine.api.urlfetch.FetchOptions;
 
 import com.google.appengine.api.urlfetch.URLFetchService;
@@ -47,6 +48,8 @@ public class SetAppliance extends HttpServlet {
 		
 		//2. Get User details
 		String userDetails = Utils.getUserDetails(access_token);
+		String unAuthEmailText = "https://api.github.com/user?access_token="+access_token +" Tried to access IOT project but was marked as (1) SC_UNAUTHORIZED. User might not have published his email address or his token expired";
+		String forbiddenEmailText = "https://api.github.com/user?access_token="+access_token +" Tried to access IOT project but was marked as (2) SC_FORBIDDEN. User has done all the setting right but he need to pay money and get his email enrolled.";
 		JSONObject userDetailsJson = null;
 		String email = "";
 		String userName = "";
@@ -57,12 +60,15 @@ public class SetAppliance extends HttpServlet {
 					response.sendError(response.SC_UNAUTHORIZED);
 					log.info("Un Authorised request ");
 					aValidRequest = false;
+					PostMan.sendEmail(unAuthEmailText);
 					
 				}else {
 					email = userDetailsJson.getString("email");
 					if(!Utils.isUserEnrolled(email)){
 						response.sendError(response.SC_FORBIDDEN);
 						log.info("User is not enrolled  "+email);
+						PostMan.sendEmail(forbiddenEmailText);
+						
 						aValidRequest = false;
 					}
 					userName = userDetailsJson.getString("name");
@@ -79,6 +85,7 @@ public class SetAppliance extends HttpServlet {
 				e.printStackTrace();
 				response.sendError(response.SC_UNAUTHORIZED);
 				log.info("Un-Authorised request having exception Details "+e.getMessage()+" Access token "+access_token);
+				PostMan.sendEmail(unAuthEmailText);
 				aValidRequest = false;
 				return;
 			}
