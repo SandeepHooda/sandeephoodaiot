@@ -132,6 +132,7 @@ public class Utils {
 	public static JSONObject createApplianceStatusFromReq(HttpServletRequest request, JSONObject applianceJsonStatus, String currentData){
 		String light = request.getParameter("light");
 		String fan = request.getParameter("fan");
+		String everything = request.getParameter("everything");
 		String respo = "";
 		
 		try {
@@ -143,6 +144,10 @@ public class Utils {
 			if (fan != null){
 				
 				applianceJsonStatus.put("fan", fan);
+			}
+			if (everything != null){
+				applianceJsonStatus.put("light", everything);
+				applianceJsonStatus.put("fan", everything);
 			}
 			
 			
