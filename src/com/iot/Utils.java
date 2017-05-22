@@ -29,9 +29,15 @@ public class Utils {
 	private static List<String> enrolledEmails = new ArrayList<String>();
 	static{
 		enrolledEmails.add("sonu.hooda@gmail.com");
+		enrolledEmails.add("alexatestsanhoo1@gmail.com");
+		enrolledEmails.add("alexatestsanhoo2@gmail.com");
+		
 	}
 	
 	public static boolean isUserEnrolled(String email){
+		if (null != email){
+			email = email.toLowerCase();
+		}
 		return enrolledEmails.contains(email);
 	}
 	public static String getCurrentStatus(String collection){
