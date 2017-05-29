@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -58,7 +59,7 @@ public class Utils {
 	 
 	        } catch (IOException e) {
 	        	e.printStackTrace();
-	        	//respo = e.getMessage();
+	        	respo ="Error : "+ e.getMessage();
 	        }
 		
 	  
@@ -127,10 +128,12 @@ public class Utils {
 	            req.setHeader(header);
 	           
 	            req.setPayload((applianceJsonStatus.toString()).getBytes());
-	            HTTPResponse res = fetcher.fetch(req);
-	           
+	            fetcher.fetch(req);
+	            
+	            log.info("Updated the DB  collection "+collection+applianceJsonStatus.toString());
 	 
 	        } catch (IOException e) {
+	        	 log.info("Error while  upfdating DB  collection "+collection+applianceJsonStatus.toString()+" Message "+e.getMessage());
 	        	e.printStackTrace();
 	        }
 	}
@@ -139,7 +142,6 @@ public class Utils {
 		String light = request.getParameter("light");
 		String fan = request.getParameter("fan");
 		String everything = request.getParameter("everything");
-		String respo = "";
 		
 		try {
 			applianceJsonStatus = new JSONObject(currentData);
@@ -155,7 +157,7 @@ public class Utils {
 				applianceJsonStatus.put("light", everything);
 				applianceJsonStatus.put("fan", everything);
 			}
-			
+			applianceJsonStatus.put("requestTime", new Date().toString());
 			
 		} catch (JSONException e1) {
 			
@@ -164,6 +166,7 @@ public class Utils {
 		log.info("Final appliance status to be writed to DB "+applianceJsonStatus.toString());
 		return applianceJsonStatus;
 	}
+	
 	
 
 

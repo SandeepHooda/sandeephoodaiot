@@ -56,9 +56,9 @@ function setImageVisible(id, visible) {
     img.style.visibility = (visible ? 'visible' : 'hidden');
 }
 
-function getValueFromDB(){
+function getFanLightStatusFromDB(){
 	var cookieAccess = getCookie("cookieAccess");
-	var url = "https://sandeephoodaiot.appspot.com/SetAppliance?collection=bedRoom&access_token="+cookieAccess;
+	var url = "https://sandeephoodaiot.appspot.com/GetData?collection=bedRoom&access_token="+cookieAccess;
 	
 	var xhttp;
 	if (window.XMLHttpRequest) {
@@ -88,59 +88,62 @@ function getValueFromDB(){
 
 	xhttp.send();
 }
+function isEsppConnected (){
+	var cookieAccess = getCookie("cookieAccess");
+	var url = "/GetData?collection=microCtrl_bedRoom&access_token="+cookieAccess;
+		
+		var xhttp;
+		if (window.XMLHttpRequest) {
+		    xhttp = new XMLHttpRequest();
+		    } else {
+		    // code for IE6, IE5
+		    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		
+		xhttp.onreadystatechange = function() {
+		    if (xhttp.readyState == 4 && xhttp.status == 200) {
+		    	var obj = JSON.parse(xhttp.responseText);
+		    	var status = obj.microctrl;
+		    	if (document.getElementById("switches").style.visibility == 'visible'){
+		    		if (!onOffSwitchClicked){
+		    			if (status.indexOf("light:on") >= 0){
+				    		document.getElementById("LightStatus").src = '/images/on.jpg' ;
+				    		
+				    	}else {
+				    		document.getElementById("LightStatus").src = '/images/off.jpg' ;
+				    	}
+				    	if (status.indexOf("fan:on") >= 0){
+				    		document.getElementById("FanStatus").src = '/images/on.jpg' ;
+
+				    	}else {
+				    		document.getElementById("FanStatus").src = '/images/off.jpg' ;
+				    	}
+				    	
+		    		}
+		    		
+		    	}
+		    	
+		    	var microCtrlUpdateTime = status.substring(status.indexOf("@")+1);
+		    	timerCount ++;
+		    	document.getElementById("status").innerHTML = "Status: "+timerCount+ " : "+microCtrlUpdateTime+getWifiStatus(microCtrlUpdateTime);
+		    	
+		    	if (timerCount >= 20){
+		    		timerCount = 0;
+		    		clearInterval(timer);
+		    	}
+		    }
+		  };
+		xhttp.open("GET", url, true);
+		
+		xhttp.send();
+}
 function getStatus(){
 	if (!onOffSwitchClicked){
-		getValueFromDB();
+		getFanLightStatusFromDB(); //status of fan and light 
 	}
 	onOffSwitchClicked = false;
-	var cookieAccess = getCookie("cookieAccess");
-var url = "/SetAppliance?collection=microCtrl_bedRoom&access_token="+cookieAccess;
-	
-	var xhttp;
-	if (window.XMLHttpRequest) {
-	    xhttp = new XMLHttpRequest();
-	    } else {
-	    // code for IE6, IE5
-	    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	
-	xhttp.onreadystatechange = function() {
-	    if (xhttp.readyState == 4 && xhttp.status == 200) {
-	    	var obj = JSON.parse(xhttp.responseText);
-	    	var status = obj.microctrl;
-	    	if (document.getElementById("switches").style.visibility == 'visible'){
-	    		if (!onOffSwitchClicked){
-	    			if (status.indexOf("light:on") >= 0){
-			    		document.getElementById("LightStatus").src = '/images/on.jpg' ;
-			    		
-			    	}else {
-			    		document.getElementById("LightStatus").src = '/images/off.jpg' ;
-			    	}
-			    	if (status.indexOf("fan:on") >= 0){
-			    		document.getElementById("FanStatus").src = '/images/on.jpg' ;
 
-			    	}else {
-			    		document.getElementById("FanStatus").src = '/images/off.jpg' ;
-			    	}
-			    	
-	    		}
-	    		
-	    	}
-	    	
-	    	var microCtrlUpdateTime = status.substring(status.indexOf("@")+1);
-	    	timerCount ++;
-	    	document.getElementById("status").innerHTML = "Status: "+timerCount+ " : "+microCtrlUpdateTime+getWifiStatus(microCtrlUpdateTime);
-	    	
-	    	if (timerCount >= 20){
-	    		timerCount = 0;
-	    		clearInterval(timer);
-	    	}
-	    }
-	  };
-	xhttp.open("GET", url, true);
-	
-	xhttp.send();
-	
+	isEsppConnected();
 }
 function getCookie(cname) {
     var name = cname + "=";

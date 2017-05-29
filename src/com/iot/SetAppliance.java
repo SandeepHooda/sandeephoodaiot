@@ -2,6 +2,7 @@ package com.iot;
 
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -12,10 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.email.PostMan;
-import com.google.appengine.api.urlfetch.FetchOptions;
 
-import com.google.appengine.api.urlfetch.URLFetchService;
-import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
 /**
  * Servlet implementation class SetAppliance
@@ -37,10 +35,11 @@ public class SetAppliance extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		boolean aValidRequest = true;
+		boolean errorInRequest = false;
 		//1. Validate request
 		String access_token = request.getParameter("access_token");
 		if (null == access_token || access_token.trim().length() == 0){
-			response.sendError(response.SC_BAD_REQUEST);
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			log.info("Bad request missing access token");
 			aValidRequest = false;
 		
@@ -57,7 +56,7 @@ public class SetAppliance extends HttpServlet {
 			try {
 				userDetailsJson = new JSONObject(userDetails);
 				if (null == userDetailsJson || userDetailsJson.getString("email") == null || "".equals(userDetailsJson.getString("email")) || userDetailsJson.getString("name") == null){
-					response.sendError(response.SC_UNAUTHORIZED);
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 					log.info("Un Authorised request ");
 					aValidRequest = false;
 					PostMan.sendEmail(unAuthEmailText);
@@ -65,7 +64,7 @@ public class SetAppliance extends HttpServlet {
 				}else {
 					email = userDetailsJson.getString("email");
 					if(!Utils.isUserEnrolled(email)){
-						response.sendError(response.SC_FORBIDDEN);
+						response.sendError(HttpServletResponse.SC_FORBIDDEN);
 						log.info("User is not enrolled  "+email);
 						PostMan.sendEmail(forbiddenEmailText);
 						
@@ -83,7 +82,7 @@ public class SetAppliance extends HttpServlet {
 				
 			} catch (JSONException e) {
 				e.printStackTrace();
-				response.sendError(response.SC_UNAUTHORIZED);
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 				log.info("Un-Authorised request having exception Details "+e.getMessage()+" Access token "+access_token);
 				PostMan.sendEmail(unAuthEmailText);
 				aValidRequest = false;
@@ -95,44 +94,53 @@ public class SetAppliance extends HttpServlet {
 		if (aValidRequest){
 			//3. Now When we have a valid user details
 			
-			URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
-			FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();
+			
 			String collectionNameOrignal = request.getParameter("collection");
 			String collection = collectionNameOrignal;
 			collection += "_"+email ;
 			
 			//4. Get appliance current status
 			String currentData = Utils.getCurrentStatus(collection);
+			
 			if(null == currentData || "".equals(currentData.trim())){// There is no collection with that name so lets create that
-				currentData = "{ \"fan\" : \"off\" , \"light\" : \"off\"}";
+				currentData = "{ \"fan\" : \"on\" , \"light\" : \"on\"}";
 				Utils.createNewCollection(collectionNameOrignal, email);
 				Utils.createNewCollection("microCtrl_"+collectionNameOrignal, email);
+			}else if (currentData.indexOf("Error") >=0 ){
+				errorInRequest = true;
+				return;
 			}
 			
-			
-			//5. Create json data from current data in db and applying status from request 
-			JSONObject applianceJsonStatus =null;
-			applianceJsonStatus = Utils.createApplianceStatusFromReq(request, applianceJsonStatus, currentData);
-			
-			//6. Update teh appliance status in DB
-			Utils.updateData(collection, applianceJsonStatus);
-			
-		  
-			 response.setContentType("text/plain");
-			 try {
-				applianceJsonStatus.put("userName", userName);
-				applianceJsonStatus.put("email", email);
-				log.info("Setting user details  name "+userName + " email ="+email);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (!errorInRequest){
+				
+				//5. Create json data from current data in db and applying status from request 
+				JSONObject applianceJsonStatus =null;
+				applianceJsonStatus = Utils.createApplianceStatusFromReq(request, applianceJsonStatus, currentData);
+				
+				
+				
+				//6. Update teh appliance status in DB
+				Utils.updateData(collection, applianceJsonStatus);
+				
+			  
+				 response.setContentType("text/plain");
+				 try {
+					applianceJsonStatus.put("userName", userName);
+					applianceJsonStatus.put("email", email);
+					log.info("Setting user details  name "+userName + " email ="+email);
+				} catch (JSONException e) {
+					
+					e.printStackTrace();
+				}
+				 
+				if (null != applianceJsonStatus){
+					response.getWriter().println(applianceJsonStatus.toString());
+				}else {
+					response.getWriter().println("Could not find current status of appliance");
+				}
+				
 			}
-			 
-			if (null != applianceJsonStatus){
-				response.getWriter().println(applianceJsonStatus.toString());
-			}else {
-				response.getWriter().println("Could not find current status of appliance");
-			}
+			
 		}
 		
 		 

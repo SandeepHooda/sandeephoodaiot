@@ -5,6 +5,9 @@ import java.net.URL;
 
 import javax.servlet.http.*;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.Constants;
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -36,6 +39,19 @@ public class GetData extends HttpServlet {
 		FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();
 		String collection = request.getParameter("collection");
 		String datakey = request.getParameter("datakey");
+		String access_token = request.getParameter("access_token");
+		if (access_token != null){
+			String userDetails = Utils.getUserDetails(access_token);
+			try {
+				JSONObject userDetailsJson = new JSONObject(userDetails);
+				collection += "_"+userDetailsJson.getString("email");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			};
+		}
+		
+		
+		
 		String httpsURL = "https://api.mlab.com/api/1/databases/sandeepdb/collections/"+collection+"?apiKey="+Constants.mlabKey;
 		if (datakey != null && datakey.trim().length() > 0){
 			httpsURL += "&f={\""+datakey+"\":1,\"_id\":0}";

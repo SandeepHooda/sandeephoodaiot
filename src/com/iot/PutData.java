@@ -36,6 +36,7 @@ public class PutData extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    //Used by micro controller to update its status 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
 		FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();
