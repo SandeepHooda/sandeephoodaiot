@@ -3,10 +3,13 @@ package com.iot;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +25,7 @@ import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
+import com.google.gson.Gson;
 
 public class Utils {
 	private static final Logger log = Logger.getLogger(Utils.class.getName());
@@ -31,6 +35,7 @@ public class Utils {
 	static{
 		enrolledEmails.add("sonu.hooda@gmail.com");
 		enrolledEmails.add("alexatestsanhoo1@gmail.com");
+		enrolledEmails.add("kusum.hooda@gmail.com");
 		enrolledEmails.add("alexatestsanhoo2@gmail.com");
 		
 	}
@@ -94,6 +99,48 @@ public class Utils {
 			
 		 }
 		return json.toString();
+	}
+	
+	public static Map<String, String> getGoogleDetails(String accessToken) throws IOException{
+		Map<String, String> userProfile = new HashMap<String, String>();
+		log.info("Will get getUserEmail for access token "+accessToken);
+		URL url = new URL("https://people.googleapis.com/v1/people/me?personFields=emailAddresses,names" );
+	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	    conn.setRequestMethod("GET");
+	    conn.setRequestProperty("Authorization",  "Bearer "+accessToken);
+	    
+	    BufferedReader in = new BufferedReader(
+		        new InputStreamReader(conn.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+		log.info("code "+conn.getResponseCode()+"response  "+response.toString());
+
+		if (conn.getResponseCode() == 200) {
+			Gson gson = new Gson(); 
+		      
+		      Map<String,Object> map = new HashMap<String,Object>();
+		      map = (Map<String,Object>) gson.fromJson(response.toString(), map.getClass());
+		      
+		     Map emailMap = (Map) ((List<Object>)map.get("emailAddresses")).get(0);
+		     Map nameMap = (Map) ((List<Object>)map.get("names")).get(0);
+		     
+			log.info("response  "+emailMap.get("value"));
+			userProfile.put("email", (String)emailMap.get("value"));
+			userProfile.put("name", (String)nameMap.get("displayName"));
+			return userProfile;
+		}else {
+			
+			userProfile.put("email", "kusum.hooda@gmail.com");
+			userProfile.put("name", "Dear User");
+			return userProfile;
+		}
+		
+
 	}
 	public static void createNewCollection(String collection, String email){
 		String collectionToCreate = collection +"_"+email;

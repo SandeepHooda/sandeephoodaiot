@@ -73,8 +73,11 @@ public class GetData extends HttpServlet {
 	  
 		 response.setContentType("text/plain");
 		
-		
-		 response.getWriter().println(respo.replaceAll("\\[", "").replaceAll("]", ""));
+		 respo = respo.replace("\\[", "").trim();
+		 if (respo.indexOf("]") > 0){
+			 respo.substring(0, respo.length()-1);
+		 }
+		 response.getWriter().println();
 	}
 
 	/**

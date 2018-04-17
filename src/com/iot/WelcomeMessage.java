@@ -1,8 +1,6 @@
 package com.iot;
 
-
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -10,23 +8,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.email.PostMan;
 
-
 /**
- * Servlet implementation class SetAppliance
+ * Servlet implementation class WelcomeMessage
  */
-public class SetAppliance extends HttpServlet {
+public class WelcomeMessage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = Logger.getLogger(SetAppliance.class.getName());
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public SetAppliance() {
+    public WelcomeMessage() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -94,35 +92,13 @@ public class SetAppliance extends HttpServlet {
 		
 		
 		if (aValidRequest){
-			//3. Now When we have a valid user details
-			
-			
-			String collectionNameOrignal = request.getParameter("collection");
-			String collection = collectionNameOrignal;
-			collection += "_"+email ;
-			
-			//4. Get appliance current status
-			String currentData = Utils.getCurrentStatus(collection);
-			
-			if(null == currentData || "".equals(currentData.trim())){// There is no collection with that name so lets create that
-				currentData = "{ \"fan\" : \"on\" , \"light\" : \"on\"}";
-				Utils.createNewCollection(collectionNameOrignal, email);
-				Utils.createNewCollection("microCtrl_"+collectionNameOrignal, email);
-			}else if (currentData.indexOf("Error") >=0 ){
-				errorInRequest = true;
-				return;
-			}
-			
-			if (!errorInRequest){
-				
+		
 				//5. Create json data from current data in db and applying status from request 
-				JSONObject applianceJsonStatus =null;
-				applianceJsonStatus = Utils.createApplianceStatusFromReq(request, applianceJsonStatus, currentData);
+				JSONObject applianceJsonStatus =new JSONObject();
 				
 				
 				
-				//6. Update teh appliance status in DB
-				Utils.updateData(collection, applianceJsonStatus);
+			
 				
 			  
 				 response.setContentType("text/plain");
@@ -143,15 +119,9 @@ public class SetAppliance extends HttpServlet {
 				
 			}
 			
-		}
-		
-		 
+	
 	}
-	
-	
-	
 
-	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */

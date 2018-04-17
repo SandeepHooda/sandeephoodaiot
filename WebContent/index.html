@@ -174,7 +174,7 @@ function switchOnOff(){
 	}
 	var fan = ",\"fan\":\""+fanCmd+"\"}";
 	var cookieAccess = getCookie("cookieAccess");
-	var url = "https://sandeephoodaiot.appspot.com/SetAppliance?collection=bedRoom&light="+lightCmd+"&fan="+fanCmd+"&access_token="+cookieAccess;
+	var url = "https://sandeephoodaiot.appspot.com/SetAppliance?source=iot_index_html&collection=bedRoom&light="+lightCmd+"&fan="+fanCmd+"&access_token="+cookieAccess;
 	
 	var xhttp;
 	if (window.XMLHttpRequest) {

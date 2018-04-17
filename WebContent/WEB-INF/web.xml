@@ -129,4 +129,24 @@
     <servlet-name>GetUserDetails</servlet-name>
     <url-pattern>/GitHub/GetUserDetails</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Oauth</display-name>
+    <servlet-name>Oauth</servlet-name>
+    <servlet-class>com.google.Oauth</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Oauth</servlet-name>
+    <url-pattern>/Oauth</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>WelcomeMessage</display-name>
+    <servlet-name>WelcomeMessage</servlet-name>
+    <servlet-class>com.iot.WelcomeMessage</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WelcomeMessage</servlet-name>
+    <url-pattern>/WelcomeMessage</url-pattern>
+  </servlet-mapping>
 </web-app>
