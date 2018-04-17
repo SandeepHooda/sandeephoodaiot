@@ -1,5 +1,7 @@
 package com.google;
 
+
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -53,31 +56,48 @@ public class Oauth extends HttpServlet {
 		String code = request.getParameter("code");
 		String client_id = request.getParameter("client_id");
 		String state = request.getParameter("state");
-		log.info("oAuth called state : "+state +" client_id : "+client_id+" code : "+code);
-		if (null == state ){
+		log.info("Oauth called state : "+state +" client_id : "+client_id+" code : "+code);
+		if (null == state ){//Just a safety check - It don't happen
 			state = "1";
 		}
-		if (null == client_id) {
-			client_id = "876159984834-n7thh4v8h5eprrgdgldkqkbi1tup8l4i.apps.googleusercontent.com";
-			//Linking 
-			//876159984834-6hucq95rkupbv7vbl604blave3hjb6gm.apps.googleusercontent.com 
+		if (null == client_id) {//Just a safety check - It don't happen
+			client_id = "316485799665-2cd9tngdjcdcni0dt8e86ocl452alu1p.apps.googleusercontent.com";
+		
 		}
 		 if (null != code) {
-			String access_token = getAccesstoken(request, response, code, client_id);
+			/* String uname = request.getParameter("uname");
+				String psw = request.getParameter("psw");
 			
-			response.sendRedirect("https://pitangui.amazon.com/spa/skill/account-linking-status.html?vendorId=MYFQ2S2E4F1Y#state="+state+"&access_token="+access_token+"&token_type=Bearer");
-			/*String email = getUserEmail(access_token).get("email");
+			if ("alexatestsanhoo1@gmail.com".equalsIgnoreCase(uname) && "Sandeep@1234".equals(psw)) {
+				access_token = UUID.randomUUID().toString();
+				response.sendRedirect("https://pitangui.amazon.com/spa/skill/account-linking-status.html?vendorId=MYFQ2S2E4F1Y#state="+state+"&access_token="+access_token+"&token_type=Bearer");
+			}else {
+				response.sendRedirect("https://pitangui.amazon.com/spa/skill/account-linking-status.html?vendorId=MYFQ2S2E4F1Y#state="+state+"&token_type=Bearer");
+			}*/
+			 String access_token = getAccesstoken(request, response, code, client_id);
+			
+			String email = getUserEmail(access_token).get("email");
 			String name = getUserEmail(access_token).get("name");
 			addCookie("email", email,request, response );
-			addCookie("name" , name,request, response );*/
-			//response.getWriter().print(email);
+			addCookie("name" , name,request, response );
+			addCookie("cookieAccess" , access_token,request, response );
+			addCookie("userdetails" , "{\"name\":\""+email+"\",\"avatar_url\":\"https://avatars0.githubusercontent.com/u/24775543?v=4\"}",request, response );
+			response.sendRedirect("https://sandeephoodaiot.appspot.com/");
 		}else {
-			
+			//showLoginPage(response,state);
 			getAuthCode(request, response,client_id, state);
 		}
 		
 	}
 	
+	private void showLoginPage( HttpServletResponse response, String state) {
+		String redirectUrl = "/login.html?state="+state;
+		try {
+			response.sendRedirect(redirectUrl);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	private void addCookie(String cookieName, String cookieValue ,HttpServletRequest request, HttpServletResponse response){
 		Cookie cookie = new Cookie(cookieName,cookieValue);
 	      cookie.setMaxAge(60*60*24); 
@@ -98,11 +118,10 @@ public class Oauth extends HttpServlet {
 	
 	private String getAccesstoken(HttpServletRequest request, HttpServletResponse res, String code, String client_id) throws IOException{
 		log.info("Got auth code , now try to get access token  "+code);
-		//String client_id = "876159984834-v9hq7k8qh1o8cm8amno9jo7l8qjf6efe.apps.googleusercontent.com";
-		String client_secret = "xhmomBYDUgbOZiXsU0PNSkId";
-		if ("876159984834-6hucq95rkupbv7vbl604blave3hjb6gm.apps.googleusercontent.com".equalsIgnoreCase(client_id)) {
-			client_secret = "KP5rSq8um8Anwe_QYSlCknoJ"; //linking
-		}
+		
+		String client_secret = "ylBfbNqS2t0iBzpjc7bPQGua";
+	
+		
 		
 		String urlParameters  = "grant_type=authorization_code&client_id="+client_id+"&client_secret="+client_secret+"&redirect_uri=https%3A%2F%2Fsandeephoodaiot.appspot.com%2FOauth&code="+code;
 		byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
@@ -166,7 +185,7 @@ public class Oauth extends HttpServlet {
 		in.close();
 
 		Gson gson = new Gson(); 
-	      
+		log.info("code:  "+conn.getResponseCode()+" response "+response.toString());
 	      Map<String,Object> map = new HashMap<String,Object>();
 	      map = (Map<String,Object>) gson.fromJson(response.toString(), map.getClass());
 	      

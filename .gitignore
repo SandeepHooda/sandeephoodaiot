@@ -1,1 +1,6 @@
 build/classes/*
+/build/
+
+/build/classes/**/*.class
+/build/classes/**/*.class
+/build/classes/com/iot/GetData.class

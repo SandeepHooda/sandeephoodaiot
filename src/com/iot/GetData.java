@@ -2,6 +2,8 @@ package com.iot;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.http.*;
 
@@ -9,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.Constants;
+import com.google.Oauth;
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
@@ -21,6 +24,7 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
  */
 public class GetData extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger log = Logger.getLogger(GetData.class.getName());
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -41,11 +45,12 @@ public class GetData extends HttpServlet {
 		String datakey = request.getParameter("datakey");
 		String access_token = request.getParameter("access_token");
 		if (access_token != null){
-			String userDetails = Utils.getUserDetails(access_token);
+			log.info("getting details from google ");
+			Map<String, String> userDetails = Utils.getGoogleDetails(access_token);
 			try {
-				JSONObject userDetailsJson = new JSONObject(userDetails);
-				collection += "_"+userDetailsJson.getString("email");
-			} catch (JSONException e) {
+				log.info("user email "+userDetails.get("email"));
+				collection += "_"+userDetails.get("email");
+			} catch (Exception e) {
 				e.printStackTrace();
 			};
 		}
@@ -60,12 +65,12 @@ public class GetData extends HttpServlet {
 		}
 		String respo = "";
 		 try {
-			
+			 log.info("connecting to mlab ");
 		        URL url = new URL(httpsURL);
 	            HTTPRequest req = new HTTPRequest(url, HTTPMethod.GET, lFetchOptions);
 	            HTTPResponse res = fetcher.fetch(req);
 	            respo =(new String(res.getContent()));
-	 
+	            log.info(" response from mlab "+respo);
 	        } catch (IOException e) {
 	        	respo = e.getMessage();
 	        }
@@ -77,7 +82,7 @@ public class GetData extends HttpServlet {
 		 if (respo.indexOf("]") > 0){
 			 respo.substring(0, respo.length()-1);
 		 }
-		 response.getWriter().println();
+		 response.getWriter().println(respo);
 	}
 
 	/**

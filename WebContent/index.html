@@ -198,19 +198,24 @@ function switchOnOff(){
 	xhttp.send(light+fan);
 	
 }
+function signIN(){
+	window.open("/Oauth", "_self");
+}
 </script>
   </head>
   <body>
   
   <div class="oauth-button"  >
-		<form action="GitHub/Step0GetTempAuthCode">
+		
 	  		
-	  		<input type="submit" value="Sign in" class="signin-btn"   id="signin" name="signin"></input>
-		</form>
-		<form action="/GitHub/SignOut">
+	  		<!-- <input type="submit" value="Sign in" class="signin-btn"   id="signin" name="signin"></input>
+	  		 -->
+	  		<button onclick="signIN()" id="signin" name="signin">Google Sign in</button>
+		
+		
 	  		
 	  		<input disabled type="submit" value="Sign out" class="signout-btn" id="signout" name="signout"></input>
-		</form>
+		
 		
 		
 	</div>
