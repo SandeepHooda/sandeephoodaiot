@@ -2,6 +2,7 @@ package com.iot;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -38,22 +39,38 @@ public class GetData extends HttpServlet {
 	 * @throws IOException 
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    
+    //Bt index.html to get DB status
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException  {
 		URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
 		FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate();
 		String collection = request.getParameter("collection");
 		String datakey = request.getParameter("datakey");
-		String access_token = request.getParameter("access_token");
-		if (access_token != null){
-			log.info("getting details from google ");
-			Map<String, String> userDetails = Utils.getGoogleDetails(access_token);
+		
+		
+		Map<String, String> userDetails =  new HashMap<String, String>(); 
+		
+			
+			Cookie[] cookies = request.getCookies();
+			 
+			 if (null != cookies){
+				 for (int i=0;i<cookies.length;i++){
+					 Cookie aCookie = cookies[i];
+					 if("email".equalsIgnoreCase(aCookie.getName())){
+						 userDetails.put("email", aCookie.getValue())  ;
+					 }else  if("name".equalsIgnoreCase(aCookie.getName())){
+						 userDetails.put("name", aCookie.getValue())  ;
+					 }
+				 }
+			 }
+			 
 			try {
 				log.info("user email "+userDetails.get("email"));
 				collection += "_"+userDetails.get("email");
 			} catch (Exception e) {
 				e.printStackTrace();
 			};
-		}
+		
 		
 		
 		
@@ -78,9 +95,10 @@ public class GetData extends HttpServlet {
 	  
 		 response.setContentType("text/plain");
 		
-		 respo = respo.replace("\\[", "").trim();
+		 respo = respo.replace("[", "").trim();
 		 if (respo.indexOf("]") > 0){
-			 respo.substring(0, respo.length()-1);
+			 respo = respo.trim();
+			 respo =respo.substring(0, respo.length()-1);
 		 }
 		 response.getWriter().println(respo);
 	}

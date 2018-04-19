@@ -81,8 +81,8 @@ public class Oauth extends HttpServlet {
 			addCookie("email", email,request, response );
 			addCookie("name" , name,request, response );
 			addCookie("cookieAccess" , access_token,request, response );
-			addCookie("userdetails" , "{\"name\":\""+email+"\",\"avatar_url\":\"https://avatars0.githubusercontent.com/u/24775543?v=4\"}",request, response );
-			response.sendRedirect("https://sandeephoodaiot.appspot.com/");
+			addCookie("userdetails" , "{\"name\":\""+name+"\",\"avatar_url\":\"https://avatars0.githubusercontent.com/u/24775543?v=4\"}",request, response );
+			response.sendRedirect("https://sandeephoodaiot.appspot.com/index.html");
 		}else {
 			//showLoginPage(response,state);
 			getAuthCode(request, response,client_id, state);

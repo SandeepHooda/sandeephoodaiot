@@ -9,7 +9,7 @@
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
- 	<script src="js/github.js"></script>
+ 	<script src="js/index.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link href="style/app.css" rel="stylesheet">
@@ -58,7 +58,7 @@ function setImageVisible(id, visible) {
 
 function getFanLightStatusFromDB(){
 	var cookieAccess = getCookie("cookieAccess");
-	var url = "https://sandeephoodaiot.appspot.com/GetData?collection=bedRoom&access_token="+cookieAccess;
+	var url = "https://sandeephoodaiot.appspot.com/GetData?collection=bedRoom";
 	
 	var xhttp;
 	if (window.XMLHttpRequest) {
@@ -90,7 +90,7 @@ function getFanLightStatusFromDB(){
 }
 function isEsppConnected (){
 	var cookieAccess = getCookie("cookieAccess");
-	var url = "/GetData?collection=microCtrl_bedRoom&access_token="+cookieAccess;
+	var url = "/GetData?collection=microCtrl_bedRoom";
 		
 		var xhttp;
 		if (window.XMLHttpRequest) {
@@ -106,13 +106,13 @@ function isEsppConnected (){
 		    	var status = obj.microctrl;
 		    	if (document.getElementById("switches").style.visibility == 'visible'){
 		    		if (!onOffSwitchClicked){
-		    			if (status.indexOf("light:on") >= 0){
+		    			if (status && status.indexOf("light:on") >= 0){
 				    		document.getElementById("LightStatus").src = '/images/on.jpg' ;
 				    		
 				    	}else {
 				    		document.getElementById("LightStatus").src = '/images/off.jpg' ;
 				    	}
-				    	if (status.indexOf("fan:on") >= 0){
+				    	if (status && status.indexOf("fan:on") >= 0){
 				    		document.getElementById("FanStatus").src = '/images/on.jpg' ;
 
 				    	}else {
@@ -174,7 +174,7 @@ function switchOnOff(){
 	}
 	var fan = ",\"fan\":\""+fanCmd+"\"}";
 	var cookieAccess = getCookie("cookieAccess");
-	var url = "https://sandeephoodaiot.appspot.com/SetAppliance?source=iot_index_html&collection=bedRoom&light="+lightCmd+"&fan="+fanCmd+"&access_token="+cookieAccess;
+	var url = "https://sandeephoodaiot.appspot.com/SetAppliance?source=iot_index_html&collection=bedRoom&light="+lightCmd+"&fan="+fanCmd;
 	
 	var xhttp;
 	if (window.XMLHttpRequest) {
@@ -201,6 +201,15 @@ function switchOnOff(){
 function signIN(){
 	window.open("/Oauth", "_self");
 }
+function delete_cookie(name) {
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+};
+function signOut(){
+	delete_cookie("userdetails");
+	delete_cookie("name");
+	delete_cookie("email");
+	window.open("/SignOut", "_self");
+}
 </script>
   </head>
   <body>
@@ -210,11 +219,12 @@ function signIN(){
 	  		
 	  		<!-- <input type="submit" value="Sign in" class="signin-btn"   id="signin" name="signin"></input>
 	  		 -->
-	  		<button onclick="signIN()" id="signin" name="signin">Google Sign in</button>
+	  		<button onclick="signIN()" id="signin" name="signin" class="loginBtn loginBtn--google">Google Sign in</button>
 		
+			<button disabled onclick="signOut()" id="signout" name="signout">Sign out</button>
 		
 	  		
-	  		<input disabled type="submit" value="Sign out" class="signout-btn" id="signout" name="signout"></input>
+	  		
 		
 		
 		

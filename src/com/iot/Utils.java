@@ -27,6 +27,8 @@ import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 import com.google.gson.Gson;
 
+import mangodb.MangoDB;
+
 public class Utils {
 	private static final Logger log = Logger.getLogger(Utils.class.getName());
 	private static URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
@@ -101,44 +103,26 @@ public class Utils {
 		return json.toString();
 	}
 	
-	public static Map<String, String> getGoogleDetails(String accessToken) throws IOException{
+	public static Map<String, String> getUserDetailsFromMangoDB(String accessToken) throws IOException{
+		accessToken = accessToken.replaceAll("[^A-Za-z0-9]", "");
+		if (accessToken.length() > 80) {
+			accessToken = accessToken.substring(0, 80);
+		}
+		String json = MangoDB.getData("google-oauth", accessToken, null);
+		 //String json = MangoDB.getData("google-oauth", "ya29GlyhBZQa3FkkxZw7yQN3jw6crqNFCLriW9dAy6GpQYYH09f2czk2oKOGWiJWOHFBEIhCO4NBMOo9", null);
 		Map<String, String> userProfile = new HashMap<String, String>();
-		log.info("Will get getUserEmail for access token "+accessToken);
-		URL url = new URL("https://people.googleapis.com/v1/people/me?personFields=emailAddresses,names" );
-	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	    conn.setRequestMethod("GET");
-	    conn.setRequestProperty("Authorization",  "Bearer "+accessToken);
+		
+		
+		 Gson gson = new Gson(); 
+	     Map<String,Object> map = new HashMap<String,Object>();
 	    
-	    BufferedReader in = new BufferedReader(
-		        new InputStreamReader(conn.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
-		log.info("code "+conn.getResponseCode()+"response  "+response.toString());
-
-		if (conn.getResponseCode() == 200) {
-			Gson gson = new Gson(); 
-		      
-		      Map<String,Object> map = new HashMap<String,Object>();
-		      map = (Map<String,Object>) gson.fromJson(response.toString(), map.getClass());
-		      
-		     Map emailMap = (Map) ((List<Object>)map.get("emailAddresses")).get(0);
-		     Map nameMap = (Map) ((List<Object>)map.get("names")).get(0);
-		     
-			log.info("response  "+emailMap.get("value"));
-			userProfile.put("email", (String)emailMap.get("value"));
-			userProfile.put("name", (String)nameMap.get("displayName"));
-			return userProfile;
-		}else {
-			
-			userProfile.put("email", "kusum.hooda@gmail.com");
-			userProfile.put("name", "Dear User");
-			return userProfile;
-		}
+	     map = (Map<String,Object>) gson.fromJson(json, map.getClass());
+	     Map emailMap = (Map) ((List<Object>)map.get("emailAddresses")).get(0);
+	     Map nameMap = (Map) ((List<Object>)map.get("names")).get(0);
+		 userProfile.put("email", (String)emailMap.get("value"));
+		 userProfile.put("name", (String)nameMap.get("displayName"));
+		return userProfile;
+		
 		
 
 	}

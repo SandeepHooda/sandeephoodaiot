@@ -3,10 +3,12 @@ package com.iot;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,17 +42,39 @@ public class SetAppliance extends HttpServlet {
 		//1. Validate request
 		String access_token = request.getParameter("access_token");
 		String source = request.getParameter("source");
-		if (null == source || null == access_token || access_token.trim().length() == 0){
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			log.info("Bad request missing access token");
-			aValidRequest = false;
 		
+		Map<String, String> userDetails =  new HashMap<String, String>(); 
+		if ("iot_index_html".equals(source)) {//called from index .html
+			
+			Cookie[] cookies = request.getCookies();
+			 
+			 if (null != cookies){
+				 for (int i=0;i<cookies.length;i++){
+					 Cookie aCookie = cookies[i];
+					 if("email".equalsIgnoreCase(aCookie.getName())){
+						 userDetails.put("email", aCookie.getValue())  ;
+					 }else  if("name".equalsIgnoreCase(aCookie.getName())){
+						 userDetails.put("name", aCookie.getValue())  ;
+					 }
+				 }
+			 }
+		}else {//Called from alexa
+			if (null == source || null == access_token || access_token.trim().length() == 0){
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+				log.info("Bad request missing access token");
+				aValidRequest = false;
+			
+			}else {
+				//2. Get User details
+				userDetails = Utils.getUserDetailsFromMangoDB(access_token);
+			}
+			
 		}
 		
-		//2. Get User details
-		Map<String, String> userDetails = Utils.getGoogleDetails(access_token);
-		String unAuthEmailText = "https://api.github.com/user?access_token="+access_token +" Tried to access IOT project but was marked as (1) SC_UNAUTHORIZED. User might not have published his email address or his token expired";
-		String forbiddenEmailText = "https://api.github.com/user?access_token="+access_token +" Tried to access IOT project but was marked as (2) SC_FORBIDDEN. User has done all the setting right but he need to pay money and get his email enrolled.";
+		
+		
+		String unAuthEmailText = userDetails.get("name")+" "+userDetails.get("email") +" Tried to access IOT project but was marked as (1) SC_UNAUTHORIZED. User might not have published his email address or his token expired";
+		String forbiddenEmailText = userDetails.get("name")+" "+userDetails.get("email") +" Tried to access IOT project but was marked as (2) SC_FORBIDDEN. User has done all the setting right but he need to pay money and get his email enrolled.";
 		
 		String email = "";
 		String userName = "";
@@ -73,12 +97,8 @@ public class SetAppliance extends HttpServlet {
 						aValidRequest = false;
 					}
 					userName =userDetails.get("name");
-					if (null != userName && !"".equals(userName)){
-						if (userName.indexOf(" ") >0){
-							userName = userName.substring(0, userName.indexOf(" "));
-						}
-					}else {
-						userName = "";
+					if (null == userName) {
+						userName = "Dear user";
 					}
 				}
 				
