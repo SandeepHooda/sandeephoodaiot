@@ -122,10 +122,13 @@ function isEsppConnected (){
 		    		}
 		    		
 		    	}
-		    	
-		    	var microCtrlUpdateTime = status.substring(status.indexOf("@")+1);
 		    	timerCount ++;
-		    	document.getElementById("status").innerHTML = "Status: "+timerCount+ " : "+microCtrlUpdateTime+getWifiStatus(microCtrlUpdateTime);
+		    	if (status){
+		    		var microCtrlUpdateTime = status.substring(status.indexOf("@")+1);
+			    	
+			    	document.getElementById("status").innerHTML = "Status: "+timerCount+ " : "+microCtrlUpdateTime+getWifiStatus(microCtrlUpdateTime);
+		    	}
+		    	
 		    	
 		    	if (timerCount >= 20){
 		    		timerCount = 0;
@@ -221,7 +224,7 @@ function signOut(){
 	  		 -->
 	  		<button onclick="signIN()" id="signin" name="signin" class="loginBtn loginBtn--google">Google Sign in</button>
 		
-			<button disabled onclick="signOut()" id="signout" name="signout">Sign out</button>
+			<button disabled onclick="signOut()" id="signout" name="signout"  class="loginBtn loginBtn--google">Sign out</button>
 		
 	  		
 	  		

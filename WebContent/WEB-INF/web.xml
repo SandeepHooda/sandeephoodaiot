@@ -117,7 +117,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>SignOut</servlet-name>
-    <url-pattern>/GitHub/SignOut</url-pattern>
+    <url-pattern>/SignOut</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>

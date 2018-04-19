@@ -38,7 +38,7 @@ function getUserPhoto(){
            }
         }
     };
-    xmlhttp.open("GET", "http://picasaweb.google.com/data/entry/api/user/"+getCookie("email")+"?alt=json", true);
+    xmlhttp.open("GET", "https://picasaweb.google.com/data/entry/api/user/"+getCookie("email")+"?alt=json", true);
  
     xmlhttp.send(); 
 }  
