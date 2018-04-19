@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.communication.email.EmailAddess;
+import com.communication.email.EmailVO;
+import com.communication.email.MailService;
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -82,6 +86,10 @@ public class Oauth extends HttpServlet {
 			addCookie("name" , name,request, response );
 			addCookie("cookieAccess" , access_token,request, response );
 			addCookie("userdetails" , "{\"name\":\""+name+"\",\"avatar_url\":\"https://avatars0.githubusercontent.com/u/24775543?v=4\"}",request, response );
+			
+			 EmailAddess toAddress = new EmailAddess();
+			 toAddress.setAddress("sonu.hooda@gmail.com");
+			new  MailService().sendSimpleMail(prepareEmailVO(toAddress, "Sign in to iot index.html", 	email +" "+name, null, null));
 			response.sendRedirect("https://sandeephoodaiot.appspot.com/index.html");
 		}else {
 			//showLoginPage(response,state);
@@ -205,6 +213,28 @@ public class Oauth extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+	}
+	
+	private static EmailVO prepareEmailVO( EmailAddess toAddress, String subject , String htmlBody, String base64attachment, String attachmentName ) {
+		EmailVO emailVO = new EmailVO();
+		
+		emailVO.setUserName( "myshopemailnotification@gmail.com");
+		emailVO.setPassword( "gizmtcibqjnqhqtz");
+		EmailAddess fromAddress = new EmailAddess();
+		fromAddress.setAddress(emailVO.getUserName());
+		fromAddress.setLabel("Alexa acount linked");
+		emailVO.setFromAddress( fromAddress);
+		
+		
+		List<EmailAddess> toAddressList = new ArrayList<EmailAddess>();
+		
+		toAddressList.add(toAddress);
+		emailVO.setToAddress(toAddressList);
+		emailVO.setSubject(subject);
+		emailVO.setHtmlContent(htmlBody);
+		emailVO.setBase64Attachment(base64attachment);
+		emailVO.setAttachmentName(attachmentName);
+		return emailVO;
 	}
 
 }
