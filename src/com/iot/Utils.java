@@ -39,6 +39,11 @@ public class Utils {
 		enrolledEmails.add("alexatestsanhoo1@gmail.com");
 		enrolledEmails.add("kusum.hooda@gmail.com");
 		enrolledEmails.add("alexatestsanhoo2@gmail.com");
+		enrolledEmails.add("bigluke3838@gmail.com");
+		enrolledEmails.add("cluke586@gmail.com");
+		enrolledEmails.add("trayburn@gmail.com");
+		enrolledEmails.add("jnbriere@gmail.com");
+		enrolledEmails.add("bigpoppafc@gmail.com");
 		
 	}
 	

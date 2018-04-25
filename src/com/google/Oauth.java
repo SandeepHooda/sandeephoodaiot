@@ -222,7 +222,7 @@ public class Oauth extends HttpServlet {
 		emailVO.setPassword( "gizmtcibqjnqhqtz");
 		EmailAddess fromAddress = new EmailAddess();
 		fromAddress.setAddress(emailVO.getUserName());
-		fromAddress.setLabel("Alexa acount linked");
+		fromAddress.setLabel("Sign in to iot index.html");
 		emailVO.setFromAddress( fromAddress);
 		
 		
