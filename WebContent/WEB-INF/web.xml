@@ -169,4 +169,54 @@
     <servlet-name>ImageTrigger</servlet-name>
     <url-pattern>/ImageTrigger</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>PaymentSeccess</display-name>
+    <servlet-name>PaymentSeccess</servlet-name>
+    <servlet-class>com.paypal.PaymentSeccess</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PaymentSeccess</servlet-name>
+    <url-pattern>/PaymentSeccess</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>PaymentDeclined</display-name>
+    <servlet-name>PaymentDeclined</servlet-name>
+    <servlet-class>com.paypal.PaymentDeclined</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PaymentDeclined</servlet-name>
+    <url-pattern>/PaymentDeclined</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Server</display-name>
+    <servlet-name>Server</servlet-name>
+    <servlet-class>com.paypal.Server</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Server</servlet-name>
+    <url-pattern>/Server</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>GetText</display-name>
+    <servlet-name>GetText</servlet-name>
+    <servlet-class>com.plivoCall.GetText</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetText</servlet-name>
+    <url-pattern>/GetText</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>MotionDetected</display-name>
+    <servlet-name>MotionDetected</servlet-name>
+    <servlet-class>com.gateKeeper.MotionDetected</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MotionDetected</servlet-name>
+    <url-pattern>/MotionDetected</url-pattern>
+  </servlet-mapping>
 </web-app>

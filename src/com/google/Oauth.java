@@ -98,14 +98,7 @@ public class Oauth extends HttpServlet {
 		
 	}
 	
-	private void showLoginPage( HttpServletResponse response, String state) {
-		String redirectUrl = "/login.html?state="+state;
-		try {
-			response.sendRedirect(redirectUrl);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	
 	private void addCookie(String cookieName, String cookieValue ,HttpServletRequest request, HttpServletResponse response){
 		Cookie cookie = new Cookie(cookieName,cookieValue);
 	      cookie.setMaxAge(60*60*24); 

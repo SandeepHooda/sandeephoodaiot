@@ -14,9 +14,12 @@
     <link href="style/app.css" rel="stylesheet">
    
 <script>
-
-function captureImage(){
+function increaseImageSize(){
 	
+}
+function captureImage(){
+	 
+	 
 	var url = "/ImageTrigger";
 	
 	var xhttp;
@@ -28,17 +31,17 @@ function captureImage(){
 	}
 	
 	xhttp.onreadystatechange = function() {
+		document.getElementById("captureImageBtn").style.height = "150";
+		 document.getElementById("captureImageBtn").style.width = "150";
 	    if (xhttp.readyState == 4 && xhttp.status == 200) {
-	    	if (null != timer ){
-	    		timerCount = 0;
-	    		clearInterval(timer);
-	    	}
-	    	timer = setInterval(getStatus, 2000);
+	    
 	    }
 	  };
 	xhttp.open("POST", url, true);
 	xhttp.setRequestHeader("Content-type", "application/json");
 	xhttp.send();
+	document.getElementById("captureImageBtn").style.height = "250";
+	 document.getElementById("captureImageBtn").style.width = "250";
 	
 }
 
@@ -48,8 +51,8 @@ function captureImage(){
   
   <div class="oauth-button"  >
 		
-	  	
-	  		<button onclick="captureImage()" id="captureImage" name="captureImage" class="loginBtn loginBtn--google">Capture image</button>
+	  	<input  onclick="captureImage()" id="captureImageBtn" name="captureImageBtn"  type="image" src="images/Camera.png" alt="Capture image" width="148px" height="148px">
+	  		
 		
 		
 		
