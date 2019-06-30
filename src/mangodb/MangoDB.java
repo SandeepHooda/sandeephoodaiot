@@ -1,7 +1,11 @@
 package mangodb;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.logging.Logger;
 
@@ -19,6 +23,7 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
 public class MangoDB {
 	public static final String mlabKeySonu = "soblgT7uxiAE6RsBOGwI9ZuLmcCgcvh_";
+	public static final String mlabKeyReminder = "oEEHExhtLS3QShn3Y2Kl4_a4nampQKj9";
 	public static final String noCollection = "";
 	private static final Logger log = Logger.getLogger(MangoDB.class.getName());
 	private static FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate().setDeadline(300d);
@@ -133,6 +138,55 @@ public static void createNewDocument(String dbName,String collectionToCreate,  S
 	        }
 		
 	}
+	
+	public static void createNewDocumentInCollection(String dbName,String collection,  String data, String key){
+		if (null == key) {
+			key = mlabKeyReminder;
+		}
+			String httpsURL = "https://api.mlab.com/api/1/databases/"+dbName+"/collections/"+collection+"?apiKey="+key;
+			HttpURLConnection connection = null;
+			 try {
+				 //data =URLEncoder.encode(data, "UTF-8");
+			        URL url = new URL(httpsURL);
+			       
+			        connection = (HttpURLConnection) url.openConnection();	
+			        connection.setDoOutput(true);
+		            connection.setRequestMethod("POST");
+			        connection.setRequestProperty("Content-Type",          "application/json");
+			        connection.setRequestProperty( "charset", "utf-8");
+			        connection.setRequestProperty("Content-Length",            Integer.toString(data.length()));
+			        connection.setUseCaches( false );
+		          // System.out.println(" data to be created "+data);
+		            
+			      //Send request
+		           OutputStreamWriter wr = new OutputStreamWriter (
+			            connection.getOutputStream());
+			        wr.write(data);
+			        wr.flush();
+			      
+			       // System.out.println(" data base update done");
+			        
+			        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		            String line, response = "";
+
+		            while ((line = reader.readLine()) != null) {
+		                // Process line...
+		                response += line;
+		            }
+		            reader.close();
+		            wr.close();
+
+		           //System.out.println(response);
+		 
+		        } catch (IOException e) {
+		        	
+		        }finally {
+		        	if (connection != null) {
+		                connection.disconnect();
+		              }
+		        }
+		}
+		
 	
 
 }

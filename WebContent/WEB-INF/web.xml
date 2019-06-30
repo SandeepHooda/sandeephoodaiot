@@ -219,4 +219,14 @@
     <servlet-name>MotionDetected</servlet-name>
     <url-pattern>/MotionDetected</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>VoltageLogger</display-name>
+    <servlet-name>VoltageLogger</servlet-name>
+    <servlet-class>com.voltage.VoltageLogger</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>VoltageLogger</servlet-name>
+    <url-pattern>/VoltageLogger</url-pattern>
+  </servlet-mapping>
 </web-app>

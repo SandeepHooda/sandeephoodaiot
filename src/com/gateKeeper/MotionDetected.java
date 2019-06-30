@@ -28,7 +28,7 @@ public class MotionDetected extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		MangoDB.createNewDocument("sandeepdb", "gate-keeper", "{   \"_id\": \"1\",   \"motionDetected\": \"true\" , \"time\" : \""+(new Date())+"\"}", MangoDB.mlabKeySonu);
+		MangoDB.createNewDocument("sandeepdb", "gate-keeper", "{   \"_id\": \"1\",   \"motionDetected\": \"true\",\"time\" : \"#"+(new Date()).getTime()+"$\" , \"Date\" : \""+(new Date())+"\"}", MangoDB.mlabKeySonu);
 		
 		response.getWriter().print(MangoDB.getDocumentWithQuery("sandeepdb", "gate-keeper", "1",true, MangoDB.mlabKeySonu,null));
 	}

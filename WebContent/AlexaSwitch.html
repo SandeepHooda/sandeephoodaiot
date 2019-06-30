@@ -1,0 +1,89 @@
+<html>
+  <head>      
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Alexa control box</title>
+   
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+ 	<script src="js/alexa.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link href="style/app.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"  href="css/facebook.css">
+	<link rel="stylesheet" type="text/css"  href="css/github.css">
+<script>
+//http://remind-me-on-heroku.herokuapp.com/Switch?collection=AlexaSwitch_sonu.hooda@gmail.com&Switch=parking_light,ramp_light
+
+function getAllApplianceStatusFromDB(){
+	
+	var url = "http://remind-me-on-heroku.herokuapp.com/Switch?collection=AlexaSwitch_sonu.hooda@gmail.com&Switch=parking_light,ramp_light,bedroom_light,bedroom_fan,livingroom_fan,livingroom_light";
+	
+	var xhttp;
+	if (window.XMLHttpRequest) {
+	    xhttp = new XMLHttpRequest();
+	    } else {
+	    // code for IE6, IE5
+	    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	xhttp.onreadystatechange = function() {
+	    if (xhttp.readyState == 4 && xhttp.status == 200) {
+	    	var response = JSON.parse(xhttp.responseText);
+	    	if (response.parking_light == "on"){
+	    		document.getElementById("parking_light").checked = true;
+	    	}else {
+	    		document.getElementById("parking_light").checked = false;
+	    	}
+	    	
+	    	
+	    }
+	  };
+	xhttp.open("GET", url, true);
+
+	xhttp.send();
+}
+
+</script>
+ </head>
+ 
+ <body onload="getAllApplianceStatusFromDB()">
+  
+ 
+<div id="switches" >
+<br/><br/>
+<table>
+<tr>
+<td><B>Switch</B></td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>State</B></td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><B><span id="relayText"></span></B> </td>
+</tr>
+<tr>
+<td>Parking Light&nbsp;&nbsp;</td>
+<td>
+ <div class="onoffswitch" >
+    <input type="checkbox" name="parking_light" class="onoffswitch-checkbox" id="parking_light" onclick='switchOnOff()'>
+    <label class="onoffswitch-label" for="parking_light">
+        <span class="onoffswitch-inner"></span>
+        <span class="onoffswitch-switch"></span>
+    </label>
+</div>
+</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img id="FanStatus" src="/images/off.jpg"  style="visibility:hidden;width: 30;  height: 30;"></img>
+
+    
+</td>
+</tr>
+
+</table>
+
+     
+</div>     
+  </body>
+</html>
