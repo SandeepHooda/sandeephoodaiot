@@ -28,6 +28,8 @@ public class VoltageLogger extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	public static String timeFormat = "yyyy/M/d HH:mm:ss";
 	public static String idDate = "yyyy_M_d_a";
+	public static String idDateUI = "yyyy_M_d";
+	public static TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Kolkata");
     private Gson gson = new Gson();  
     /**
      * @see HttpServlet#HttpServlet()
@@ -36,22 +38,19 @@ public class VoltageLogger extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Calendar cal = new GregorianCalendar();
-		TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Kolkata");
+    private void saveVoltage(float voltage) {
+    	Calendar cal = new GregorianCalendar();
+		
 		SimpleDateFormat sdf = new SimpleDateFormat(timeFormat);
 		SimpleDateFormat idDateSdf = new SimpleDateFormat(idDate);
+		
 	   
 		sdf.setTimeZone(userTimeZone);
 		idDateSdf.setTimeZone(userTimeZone);
-		String voltageStr = request.getParameter("voltage");
 		
-		if (null != voltageStr) {
-			float voltage = Float.parseFloat(voltageStr);
+		
+		
+			
 			String id = idDateSdf.format(new Date(cal.getTimeInMillis()));
 			
 			String data = MangoDB.getDocumentWithQuery("voltage-logger", "voltage-logger", id, true, MangoDB.mlabKeyReminder, null);
@@ -75,9 +74,22 @@ public class VoltageLogger extends HttpServlet {
 			 data =  gson.toJson(voltageVO,  new TypeToken<VoltageVO>() {}.getType());
 			MangoDB.createNewDocumentInCollection("voltage-logger", "voltage-logger", data, null);
 			
-		}
 		
-		response.getWriter().append("voltage ").append(voltageStr +" Date "+sdf.format(new Date(cal.getTimeInMillis())));
+    }
+
+    private void saveVoltage(String voltageStr) {
+    	if (null != voltageStr) {
+			float voltage = Float.parseFloat(voltageStr);
+			saveVoltage(voltage);
+    	}
+    }
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String voltageStr = request.getParameter("voltage");
+		saveVoltage(voltageStr);
+		response.getWriter().append("voltage ").append(voltageStr );
 		
 	}
 
@@ -85,15 +97,16 @@ public class VoltageLogger extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println(" Got a post request");
+		
 		byte[] serializedSpeechletRequest = IOUtils.toByteArray(request.getInputStream());
 		String completeRequest = new String(serializedSpeechletRequest);
         
 		Gson gson = new Gson();
-        System.out.println(" This is post request : "+completeRequest);
+        
         VoltageData voltageData = (VoltageData) gson.fromJson(completeRequest, VoltageData.class);
-        System.out.println(voltageData);
-        response.getWriter().append("OK POST").append(request.getContextPath());
+       
+        saveVoltage(voltageData.getVoltage());
+        response.getWriter().append("OK POST").append(""+voltageData.getVoltage());
 	}
 
 }

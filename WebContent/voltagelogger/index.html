@@ -1,0 +1,83 @@
+<html>
+  <head>      
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Voltage logger</title>
+   
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link href="/style/app.css" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+ 
+ <!-- 
+ <script type="text/javascript">
+
+// Load google charts
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+// Draw the chart and set the chart values
+function drawChart() {
+  var data = google.visualization.arrayToDataTable([
+  ['Task', 'Hours per Day'],
+  ['Work', 8],
+  ['Eat', 2],
+  ['TV', 4],
+  ['Gym', 2],
+  ['Sleep', 8]
+]);
+
+  // Optional; add a title and set the width and height of the chart
+  var options = {'title':'My Average Day', 'width':550, 'height':400};
+
+  // Display the chart inside the <div> element with id="piechart"
+  var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+  chart.draw(data, options);
+}
+</script>
+  -->
+ 
+<script>
+
+//http://remind-me-on-heroku.herokuapp.com/Switch?collection=AlexaSwitch_sonu.hooda@gmail.com&Switch=parking_light,ramp_light
+
+function getCurrentVoltage(){
+	
+	var url = "/VoltageNoW?dayData=y";
+	
+	var xhttp;
+	if (window.XMLHttpRequest) {
+	    xhttp = new XMLHttpRequest();
+	    } else {
+	    // code for IE6, IE5
+	    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	xhttp.onreadystatechange = function() {
+	    if (xhttp.readyState == 4 && xhttp.status == 200) {
+	    	var response = JSON.parse(xhttp.responseText);
+	    	document.getElementById("voltageNow").innerHTML = response.voltage;
+	    	
+	    	
+	    }
+	  };
+	xhttp.open("GET", url, true);
+
+	xhttp.send();
+}
+
+</script>
+ </head>
+ 
+ <body onload="getCurrentVoltage()">
+  
+ <span id="voltageNow"></span>
+ 
+ <div id="piechart"></div>
+  </body>
+</html>

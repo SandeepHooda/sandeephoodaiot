@@ -229,4 +229,14 @@
     <servlet-name>VoltageLogger</servlet-name>
     <url-pattern>/VoltageLogger</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>VoltageNoW</display-name>
+    <servlet-name>VoltageNoW</servlet-name>
+    <servlet-class>com.voltage.VoltageNoW</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>VoltageNoW</servlet-name>
+    <url-pattern>/VoltageNoW</url-pattern>
+  </servlet-mapping>
 </web-app>

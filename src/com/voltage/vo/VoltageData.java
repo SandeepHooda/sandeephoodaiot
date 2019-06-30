@@ -2,7 +2,9 @@ package com.voltage.vo;
 
 public class VoltageData {
 	private long time;
+	
 	private float voltage;
+	
 	public long getTime() {
 		return time;
 	}
@@ -15,5 +17,7 @@ public class VoltageData {
 	public void setVoltage(float voltage) {
 		this.voltage = voltage;
 	}
+	
+	
 
 }
